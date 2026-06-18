@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYC Shield — AML Compliance Screening Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#070d1a;
+  --bg2:#0d1526;
+  --bg3:#111d35;
+  --bg4:#162040;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.13);
+  --text:#e8edf5;
+  --text2:#8b9ab5;
+  --text3:#4a5a78;
+  --blue:#3b82f6;
+  --blue2:#1d4ed8;
+  --blue-dim:rgba(59,130,246,0.12);
+  --green:#10b981;
+  --green-dim:rgba(16,185,129,0.12);
+  --amber:#f59e0b;
+  --amber-dim:rgba(245,158,11,0.12);
+  --red:#ef4444;
+  --red-dim:rgba(239,68,68,0.12);
+  --purple:#8b5cf6;
+  --purple-dim:rgba(139,92,246,0.12);
+  --cyan:#06b6d4;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',system-ui,sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;line-height:1.5;display:flex;overflow:hidden;height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:260px;min-width:260px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto;}
+.sidebar-brand{padding:20px 20px 16px;border-bottom:1px solid var(--border);}
+.brand-badge{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.brand-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;font-family:var(--mono);}
+.brand-name{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-0.3px;}
+.brand-sub{font-size:10px;color:var(--text3);font-family:var(--mono);letter-spacing:0.08em;text-transform:uppercase;padding-left:42px;}
+
+.sidebar-nav{flex:1;padding:12px 10px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:12px;font-weight:500;transition:all 0.15s;margin-bottom:2px;border:1px solid transparent;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--blue-dim);color:var(--blue);border-color:rgba(59,130,246,0.2);}
+.nav-item .nav-icon{width:16px;text-align:center;font-size:13px;opacity:0.7;}
+.nav-item.active .nav-icon{opacity:1;}
+.nav-num{font-family:var(--mono);font-size:10px;color:var(--text3);min-width:20px;}
+.nav-item.active .nav-num{color:var(--blue);}
+
+.sidebar-bottom{padding:14px;border-top:1px solid var(--border);}
+.sys-status{margin-bottom:12px;}
+.sys-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-family:var(--mono);margin-bottom:6px;}
+.sys-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);}
+.sys-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);}
+.share-box{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;}
+.share-label{font-size:10px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.share-ready{font-size:9px;background:var(--green-dim);color:var(--green);padding:1px 6px;border-radius:4px;font-family:var(--mono);}
+.share-desc{font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.4;}
+.share-btn{width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-size:11px;padding:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--sans);transition:all 0.15s;}
+.share-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.topbar{height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;}
+.topbar-title{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text);letter-spacing:0.04em;text-transform:uppercase;}
+.topbar-period{font-size:10px;font-family:var(--mono);color:var(--text3);background:var(--bg3);border:1px solid var(--border);padding:3px 10px;border-radius:4px;margin-left:12px;}
+.topbar-left{display:flex;align-items:center;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.user-chip{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);}
+.user-info{text-align:right;}
+.user-name{font-size:12px;font-weight:600;color:var(--text);}
+.user-role{font-size:10px;color:var(--text3);}
+.user-avatar{width:30px;height:30px;border-radius:6px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;font-family:var(--mono);}
+
+.content{flex:1;overflow-y:auto;padding:24px;}
+.content::-webkit-scrollbar{width:4px;}
+.content::-webkit-scrollbar-track{background:transparent;}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* PAGE */
+.page{display:none;}
+.page.active{display:block;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;}
+.stat-val{font-size:36px;font-weight:800;line-height:1;font-family:var(--mono);}
+.stat-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;font-family:var(--mono);margin-bottom:6px;}
+.stat-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+
+/* SECTION HEADER */
+.sec-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.sec-title{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.5px;}
+.sec-sub{font-size:12px;color:var(--text3);margin-top:3px;}
+
+/* ALERT BANNERS */
+.alert{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:10px;margin-bottom:14px;font-size:12px;line-height:1.5;}
+.alert-red{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;}
+.alert-amber{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);color:#fcd34d;}
+.alert-blue{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);color:#93c5fd;}
+.alert-green{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);color:#6ee7b7;}
+.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+
+/* GRID */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+@media(max-width:900px){.two-col,.three-col{grid-template-columns:1fr;}.stat-grid{grid-template-columns:1fr 1fr;}}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;padding:8px 12px;border-bottom:1px solid var(--border);font-family:var(--mono);white-space:nowrap;}
+td{padding:10px 12px;font-size:12px;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+tr:last-child td{border-bottom:none;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--mono);}
+.badge-red{background:var(--red-dim);color:var(--red);}
+.badge-amber{background:var(--amber-dim);color:var(--amber);}
+.badge-green{background:var(--green-dim);color:var(--green);}
+.badge-blue{background:var(--blue-dim);color:var(--blue);}
+.badge-purple{background:var(--purple-dim);color:var(--purple);}
+.badge-grey{background:rgba(255,255,255,0.06);color:var(--text2);}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+label{font-size:11px;color:var(--text2);font-weight:500;}
+label .req{color:var(--red);}
+input,select,textarea{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;padding:8px 12px;font-family:var(--sans);transition:border-color 0.15s;width:100%;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,0.1);}
+input::placeholder,textarea::placeholder{color:var(--text3);}
+select option{background:var(--bg2);}
+textarea{resize:vertical;min-height:90px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;font-family:var(--sans);transition:all 0.15s;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:var(--blue2);}
+.btn-ghost{background:transparent;color:var(--text2);border-color:var(--border2);}
+.btn-ghost:hover{background:var(--bg3);color:var(--text);}
+.btn-red{background:transparent;color:var(--red);border-color:rgba(239,68,68,0.3);}
+.btn-red:hover{background:var(--red-dim);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#059669;}
+
+/* STEPS */
+.steps{display:flex;align-items:center;margin-bottom:20px;overflow-x:auto;}
+.step-item{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;color:var(--text3);}
+.step-num{width:20px;height:20px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:var(--mono);}
+.step-item.active{color:var(--blue);}
+.step-item.active .step-num{background:var(--blue);color:#fff;border-color:var(--blue);}
+.step-item.done{color:var(--green);}
+.step-item.done .step-num{background:var(--green);color:#fff;border-color:var(--green);}
+.step-line{flex:1;min-width:20px;height:1px;background:var(--border);}
+
+/* RISK BAR */
+.risk-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:6px;}
+.risk-fill{height:100%;border-radius:3px;transition:width 0.5s;}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:16px 0;}
+
+/* CHECKLIST */
+.chk-list{display:flex;flex-direction:column;gap:7px;}
+.chk-item{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text2);cursor:pointer;}
+.chk-box{width:18px;height:18px;border-radius:4px;border:1px solid var(--border2);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:all 0.15s;}
+.chk-box.checked{background:var(--green);border-color:var(--green);color:#fff;}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;}
+.tl-item{display:flex;gap:12px;padding-bottom:14px;position:relative;}
+.tl-item::after{content:'';position:absolute;left:14px;top:26px;bottom:0;width:1px;background:var(--border);}
+.tl-item:last-child::after{display:none;}
+.tl-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;font-family:var(--mono);}
+.tl-dot-blue{background:var(--blue-dim);border:1px solid rgba(59,130,246,0.4);color:var(--blue);}
+.tl-dot-amber{background:var(--amber-dim);border:1px solid rgba(245,158,11,0.4);color:var(--amber);}
+.tl-dot-grey{background:var(--bg3);border:1px solid var(--border2);color:var(--text3);}
+.tl-content{flex:1;padding-top:5px;}
+.tl-label{font-size:12px;font-weight:600;color:var(--text);}
+.tl-meta{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.5;}
+
+/* COUNTRY GRID */
+.country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.country-card{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:12px 14px;}
+.country-card.blacklist{border-color:rgba(239,68,68,0.35);background:rgba(239,68,68,0.04);}
+.country-card.greylist{border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.03);}
+.c-name{font-size:13px;font-weight:500;margin-bottom:2px;}
+.c-meta{font-size:10px;color:var(--text3);font-family:var(--mono);}
+
+/* ACCORDION */
+.acc-item{border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:8px;}
+.acc-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;background:var(--bg3);font-size:12px;font-weight:500;}
+.acc-head:hover{background:rgba(255,255,255,0.03);}
+.acc-body{display:none;padding:12px 16px;font-size:12px;color:var(--text2);line-height:1.6;border-top:1px solid var(--border);}
+.acc-body.open{display:block;}
+.acc-arrow{transition:transform 0.2s;font-size:10px;}
+.acc-arrow.open{transform:rotate(180deg);}
+
+/* PEP HIERARCHY */
+.pep-hierarchy{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:18px;}
+.pep-step{flex:1;min-width:120px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;}
+.pep-step-num{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;}
+.pep-step-title{font-size:11px;font-weight:600;color:var(--blue);margin-bottom:2px;}
+.pep-step-sub{font-size:10px;color:var(--text3);line-height:1.4;}
+
+/* GLOSS */
+.gloss-item{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.gloss-term{min-width:180px;font-size:12px;font-weight:600;color:var(--blue);font-family:var(--mono);}
+.gloss-def{font-size:12px;color:var(--text2);line-height:1.6;}
+.gloss-scope{font-size:10px;font-family:var(--mono);color:var(--text3);margin-top:2px;}
+
+/* ACTIVITY */
+.act-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.act-item:last-child{border-bottom:none;}
+.act-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.act-text{flex:1;font-size:11px;color:var(--text2);}
+.act-text strong{color:var(--text);display:block;}
+.act-time{font-size:10px;color:var(--text3);font-family:var(--mono);}
+
+/* CERT */
+.cert{background:var(--bg3);border:1px solid var(--border2);border-radius:12px;padding:22px;}
+.cert-header{border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:16px;}
+.cert-inst{font-family:var(--mono);font-size:10px;color:var(--blue);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+.cert-title{font-size:20px;font-weight:700;color:var(--text);}
+.cert-sub{font-size:11px;color:var(--text3);margin-top:3px;}
+.cert-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+.cert-field{background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:10px 14px;}
+.cert-field-lbl{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+.cert-field-val{font-size:13px;font-weight:600;color:var(--text);}
+.cert-flag{font-size:11px;color:var(--red);display:flex;align-items:center;gap:6px;margin-top:2px;}
+.cert-docs{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.cert-doc{font-size:10px;background:var(--green-dim);color:var(--green);padding:2px 8px;border-radius:4px;font-family:var(--mono);}
+.cert-ref{font-family:var(--mono);font-size:11px;color:var(--blue);}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-badge">
+      <div class="brand-icon">KS</div>
+      <div class="brand-name">KYC Shield</div>
+    </div>
+    <div class="brand-sub">AML Practice Platform</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="showPage('dashboard')">
+      <span class="nav-num">01.</span>
+      <span class="nav-icon">◉</span>
+      <span>Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="showPage('kyc')">
+      <span class="nav-num">02.</span>
+      <span class="nav-icon">◈</span>
+      <span>KYC Screening</span>
+    </div>
+    <div class="nav-item" onclick="showPage('pep')">
+      <span class="nav-num">03.</span>
+      <span class="nav-icon">◎</span>
+      <span>PEP Screening</span>
+    </div>
+    <div class="nav-item" onclick="showPage('fatf')">
+      <span class="nav-num">04.</span>
+      <span class="nav-icon">⊕</span>
+      <span>FATF Countries</span>
+    </div>
+    <div class="nav-item" onclick="showPage('str')">
+      <span class="nav-num">05.</span>
+      <span class="nav-icon">◧</span>
+      <span>STR Filing</span>
+    </div>
+    <div class="nav-item" onclick="showPage('glossary')">
+      <span class="nav-num">06.</span>
+      <span class="nav-icon">◫</span>
+      <span>Glossary Index</span>
+    </div>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="sys-status">
+      <div class="sys-label">System Status</div>
+      <div class="sys-item"><div class="sys-dot"></div> FIU-IND Connected</div>
+    </div>
+    <div class="share-box">
+      <div class="share-label">Shareable Link <span class="share-ready">READY</span></div>
+      <div class="share-desc">Practice freely — all fields accept simulated data. No real credentials required.</div>
+      <button class="share-btn" onclick="copyURL()">⊕ Copy Platform URL</button>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="page-label">COMPLIANCE OVERVIEW</div>
+      <span class="topbar-period">DATA PERIOD: FEB 2026 PLENARY</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="user-info">
+          <div class="user-name">Dev Bhardwaj</div>
+          <div class="user-role">Forensic Accounting & AML | NFSU Delhi</div>
+        </div>
+        <div class="user-avatar">DB</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ========== DASHBOARD ========== -->
+    <div class="page active" id="page-dashboard">
+      <div class="card" style="margin-bottom:16px;border-color:rgba(59,130,246,0.2);">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--blue);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">KYC Shield — Open-Access AML Practice Simulator</div>
+        <div style="font-size:20px;font-weight:700;margin-bottom:4px;">KYC/AML Compliance Screening &amp; Audit Console</div>
+        <div style="font-size:12px;color:var(--text3);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <span>Standard-aligned platform for PMLA 2002 rules &amp; FATF February 2026 amendments.</span>
+          <span style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--green);"><span style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);display:inline-block;"></span>SECURE TERMINAL CONNECTION ACTIVE</span>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div>
+            <div class="stat-lbl">Session Screenings</div>
+            <div class="stat-val" id="d-total" style="color:var(--blue);">0</div>
+          </div>
+          <div class="stat-icon" style="background:var(--blue-dim);">🗄</div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-lbl">High-Risk / EDD Alerts</div>
+            <div class="stat-val" id="d-high" style="color:var(--red);">0</div>
+          </div>
+          <div class="stat-icon" style="background:var(--red-dim);">⚠</div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-lbl">PEP Database Matches</div>
+            <div class="stat-val" id="d-pep" style="color:var(--amber);">0</div>
+          </div>
+          <div class="stat-icon" style="background:var(--amber-dim);">👤</div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-lbl">FATF Watched Jurisdictions</div>
+            <div class="stat-val" style="color:var(--purple);">25</div>
+          </div>
+          <div class="stat-icon" style="background:var(--purple-dim);">🌐</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="font-size:14px;font-weight:600;">⊕ FATF Status Dashboard</div>
+            <span class="badge badge-purple">Plenary: February 2026</span>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">Dynamic tracking of global money laundering and terror financing threat vectors. Required screening indicators per <strong style="color:var(--text2);">PMLA Section 12AA</strong>.</div>
+
+          <div class="two-col" style="gap:10px;">
+            <div style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.3);border-radius:9px;padding:14px;">
+              <div style="font-size:10px;font-family:var(--mono);color:var(--red);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
+                <span>● BLACKLIST (CALL FOR ACTION)</span><span>n = 3</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;">🇮🇷 Iran <span class="badge badge-red">Counter-measures</span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;">🇰🇵 North Korea <span class="badge badge-red">Counter-measures</span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;">🇲🇲 Myanmar <span class="badge badge-red">Counter-measures</span></div>
+              </div>
+            </div>
+            <div style="background:var(--amber-dim);border:1px solid rgba(245,158,11,0.25);border-radius:9px;padding:14px;">
+              <div style="font-size:10px;font-family:var(--mono);color:var(--amber);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+                <span>● GREY LIST (MONITORING)</span><span>n = 22</span>
+              </div>
+              <div style="font-size:11px;color:var(--text2);line-height:1.6;">Algeria, Angola, Bolivia, Kenya, South Sudan, Syria, Venezuela, Vietnam, BVI, Kuwait &amp; Papua New Guinea (Added Feb 2026) + 11 more.</div>
+              <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:11px;" onclick="showPage('fatf')">View All 22 Monitored Countries →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:14px;font-weight:600;margin-bottom:14px;">◈ Statutory Due Diligence Archetypes</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="card-sm" style="border-color:rgba(6,182,212,0.2);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span class="badge badge-blue">SDD</span><span style="font-size:12px;font-weight:600;">Simplified Due Diligence (Score 0–29)</span></div>
+              <div style="font-size:11px;color:var(--text3);">Applied to low-risk standard accounts, domestic government listings, listed corporate entities.</div>
+            </div>
+            <div class="card-sm" style="border-color:rgba(245,158,11,0.2);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span class="badge badge-amber">CDD</span><span style="font-size:12px;font-weight:600;">Standard Diligence (Score 30–59)</span></div>
+              <div style="font-size:11px;color:var(--text3);">Default profile setup. Demands official identity validation (Aadhaar/PAN/CoI) &amp; address confirmation.</div>
+            </div>
+            <div class="card-sm" style="border-color:rgba(239,68,68,0.2);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span class="badge badge-red">EDD</span><span style="font-size:12px;font-weight:600;">Enhanced Diligence (Score 60–100 or PEP/Grey)</span></div>
+              <div style="font-size:11px;color:var(--text3);">Mandates source of wealth, senior management onboarding sign-offs, and continuous transaction audit trails.</div>
+            </div>
+            <div class="card-sm" style="border-color:rgba(139,92,246,0.2);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span class="badge badge-purple">ODD</span><span style="font-size:12px;font-weight:600;">Ongoing Due Diligence</span></div>
+              <div style="font-size:11px;color:var(--text3);">Continuous monitoring, periodic re-KYC, trigger-based escalation per FATF R.10 and PMLA Rule 9.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:12px;">Recent Session Activity</div>
+        <div id="activity-log"><div style="text-align:center;padding:20px;color:var(--text3);font-size:12px;">No activity yet. Run a KYC or PEP screening to get started.</div></div>
+      </div>
+    </div>
+
+    <!-- ========== KYC SCREENING ========== -->
+    <div class="page" id="page-kyc">
+      <div class="sec-header">
+        <div>
+          <div class="sec-title">KYC Onboarding &amp; Screening Desk</div>
+          <div class="sec-sub">5-step guided workflow — all fields accept simulated data for practice purposes</div>
+        </div>
+        <button class="btn btn-ghost" onclick="resetKYC()">↺ Reset</button>
+      </div>
+
+      <div class="alert alert-blue">
+        <span class="alert-icon">ℹ</span>
+        <span><strong>Practice Mode:</strong> This is a decision-making simulator. Use any dummy values in all fields — e.g. "PASS-2024-001" for ID numbers, fictional names, test dates. The risk engine operates entirely on the risk parameters you select, not the identity data.</span>
+      </div>
+
+      <div class="steps" id="kyc-steps">
+        <div class="step-item active" id="st1"><div class="step-num">1</div> Customer Identity</div>
+        <div class="step-line"></div>
+        <div class="step-item" id="st2"><div class="step-num">2</div> Risk Parameters</div>
+        <div class="step-line"></div>
+        <div class="step-item" id="st3"><div class="step-num">3</div> Risk Classification</div>
+        <div class="step-line"></div>
+        <div class="step-item" id="st4"><div class="step-num">4</div> Document Checklist</div>
+        <div class="step-line"></div>
+        <div class="step-item" id="st5"><div class="step-num">5</div> Compliance Certificate</div>
+      </div>
+
+      <!-- Step 1 -->
+      <div id="ks1">
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:14px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.05em;">Client Identity Specification</div>
+          <div class="form-grid">
+            <div class="form-group"><label>Full Name <span class="req">*</span></label><input id="k-name" placeholder="e.g. John Smith (any dummy name)"></div>
+            <div class="form-group"><label>Customer Type <span class="req">*</span></label>
+              <select id="k-type"><option value="">Select</option><option>Individual</option><option>Corporate Entity</option><option>Trust / Foundation</option><option>Partnership</option><option>Non-Profit / NGO</option><option>Financial Institution</option></select>
+            </div>
+            <div class="form-group"><label>Date of Birth / Incorporation</label><input type="date" id="k-dob" value="1990-01-01"></div>
+            <div class="form-group"><label>Nationality / Country <span class="req">*</span></label>
+              <select id="k-nat">
+                <option value="">Select</option>
+                <option>India</option><option>United States</option><option>United Kingdom</option><option>Germany</option><option>Singapore</option><option>UAE</option><option>Australia</option><option>Canada</option><option>France</option><option>Japan</option><option>China</option><option>Russia</option><option>Pakistan</option>
+                <option value="grey">Algeria (FATF Grey)</option><option value="grey">Angola (FATF Grey)</option><option value="grey">Bolivia (FATF Grey)</option><option value="grey">Bulgaria (FATF Grey)</option><option value="grey">Cameroon (FATF Grey)</option><option value="grey">Côte d'Ivoire (FATF Grey)</option><option value="grey">DR Congo (FATF Grey)</option><option value="grey">Haiti (FATF Grey)</option><option value="grey">Kenya (FATF Grey)</option><option value="grey">Kuwait (FATF Grey)</option><option value="grey">Laos (FATF Grey)</option><option value="grey">Lebanon (FATF Grey)</option><option value="grey">Monaco (FATF Grey)</option><option value="grey">Namibia (FATF Grey)</option><option value="grey">Nepal (FATF Grey)</option><option value="grey">Papua New Guinea (FATF Grey)</option><option value="grey">South Sudan (FATF Grey)</option><option value="grey">Syria (FATF Grey)</option><option value="grey">Venezuela (FATF Grey)</option><option value="grey">Vietnam (FATF Grey)</option><option value="grey">British Virgin Islands (FATF Grey)</option><option value="grey">Yemen (FATF Grey)</option>
+                <option value="black">Iran (FATF Blacklist)</option><option value="black">North Korea / DPRK (FATF Blacklist)</option><option value="black">Myanmar (FATF Blacklist)</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Primary ID Type <span class="req">*</span></label>
+              <select id="k-idtype"><option value="">Select</option><option>Passport</option><option>Aadhaar Card</option><option>PAN Card</option><option>Driver's Licence</option><option>National ID</option><option>Certificate of Incorporation</option><option>GST Registration</option></select>
+            </div>
+            <div class="form-group"><label>ID / Reference Number</label><input id="k-idnum" placeholder="e.g. PASS-2024-001 (any dummy value — simulation only)"></div>
+            <div class="form-group"><label>Occupation / Industry <span class="req">*</span></label><input id="k-occ" placeholder="e.g. Software Engineer, Real Estate Developer"></div>
+            <div class="form-group"><label>Origin of Funds Source <span class="req">*</span></label>
+              <select id="k-sof"><option value="">Select</option><option>Employment Income</option><option>Business Income</option><option>Inheritance</option><option>Investment Returns</option><option>Sale of Property</option><option>Gift / Donation</option><option>Unknown</option></select>
+            </div>
+            <div class="form-group"><label>Beneficial Owner (UBO) Name</label><input id="k-ubo" placeholder="If different from applicant"></div>
+            <div class="form-group"><label>UBO Ownership % (threshold: 25%)</label><input type="number" id="k-ubo-pct" placeholder="e.g. 35" min="0" max="100"></div>
+            <div class="form-group full"><label>Purpose and Intent Declared <span class="req">*</span></label><textarea id="k-purpose" placeholder="e.g. Savings / Regular Operations, Import-Export Trade, Investment Portfolio Management"></textarea></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+            <button class="btn btn-primary" onclick="kycStep1()">Continue → Risk Parameters</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div id="ks2" style="display:none;">
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:14px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.05em;">Adverse Risk Parameters</div>
+          <div class="form-grid">
+            <div class="form-group"><label>PEP Status</label>
+              <select id="k-pep"><option value="no">No PEP Link</option><option value="domestic">Domestic PEP</option><option value="foreign">Foreign PEP</option><option value="associate">PEP Family / Associate</option></select>
+            </div>
+            <div class="form-group"><label>FATF Jurisdiction Risk</label>
+              <select id="k-fatf"><option value="no">No — Standard Jurisdiction</option><option value="grey">Yes — FATF Grey List</option><option value="black">Yes — FATF Blacklist</option></select>
+            </div>
+            <div class="form-group"><label>Adverse Media / Negative News</label>
+              <select id="k-media"><option value="none">None Found</option><option value="minor">Minor / Historical</option><option value="major">Major — Last 12 Months</option></select>
+            </div>
+            <div class="form-group"><label>Sanctions List Match</label>
+              <select id="k-sanc"><option value="no">No Match</option><option value="potential">Potential Match</option><option value="confirmed">Confirmed Match</option></select>
+            </div>
+            <div class="form-group"><label>Approx. Expected Transaction Volume (INR)</label>
+              <select id="k-vol"><option value="low">Low — Under ₹1 Lakh / month</option><option value="medium">Medium — ₹1L to ₹10L / month</option><option value="high">High — Above ₹10 Lakhs / month</option></select>
+            </div>
+            <div class="form-group"><label>Complex / Opaque Corporate Structure?</label>
+              <select id="k-struct"><option value="no">No — Straightforward</option><option value="yes">Yes — Layered / Offshore</option></select>
+            </div>
+            <div class="form-group"><label>High-Risk Sector?</label>
+              <select id="k-sector"><option value="no">No</option><option value="yes">Yes — MVTS / Crypto / Real Estate / Arms / Gambling</option></select>
+            </div>
+            <div class="form-group"><label>Prior STR / SAR Filed?</label>
+              <select id="k-str"><option value="no">No</option><option value="yes">Yes</option></select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+            <button class="btn btn-ghost" onclick="kycGo(1)">← Back</button>
+            <button class="btn btn-primary" onclick="kycStep2()">Calculate Risk Score →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div id="ks3" style="display:none;">
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:14px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.05em;">Risk Classification Output</div>
+          <div id="risk-output"></div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+            <button class="btn btn-ghost" onclick="kycGo(2)">← Back</button>
+            <button class="btn btn-primary" onclick="kycGo(4)">View Document Checklist →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div id="ks4" style="display:none;">
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:14px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.05em;">Verified Documents Checklist</div>
+          <div id="doc-output"></div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+            <button class="btn btn-ghost" onclick="kycGo(3)">← Back</button>
+            <button class="btn btn-green" onclick="kycFinalize()">✓ Generate Compliance Certificate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div id="ks5" style="display:none;">
+        <div id="cert-output"></div>
+        <div style="display:flex;gap:8px;margin-top:16px;">
+          <button class="btn btn-ghost" onclick="resetKYC()">↺ New Screening</button>
+          <button class="btn btn-primary" onclick="showPage('str')">→ Proceed to STR Filing</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PEP SCREENING ========== -->
+    <div class="page" id="page-pep">
+      <div class="sec-header">
+        <div>
+          <div class="sec-title">Politically Exposed Persons Screening</div>
+          <div class="sec-sub">FATF Recommendation 12 — EDD mandatory for all PEPs, family members, and close associates</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.05em;">FATF Recommendation 12 PEP Hierarchy Timeline</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:12px;">The risk-based hierarchy determines verification depth. Standards dictate PEP monitoring remains active for a minimum of 12–24 months after the individual exits public office.</div>
+        <div class="pep-hierarchy">
+          <div class="pep-step"><div class="pep-step-num">01 →</div><div class="pep-step-title">Head of State</div><div class="pep-step-sub">Critical Risk (Presidents, PMs, Monarchs)</div></div>
+          <div class="pep-step"><div class="pep-step-num">02 →</div><div class="pep-step-title">Senior Gov</div><div class="pep-step-sub">Cabinet / Ministers / Secretaries</div></div>
+          <div class="pep-step"><div class="pep-step-num">03 →</div><div class="pep-step-title">Judicial Officials</div><div class="pep-step-sub">Supreme Court Judges / AG</div></div>
+          <div class="pep-step"><div class="pep-step-num">04 →</div><div class="pep-step-title">Military Command</div><div class="pep-step-sub">Chiefs of Staff / Generals</div></div>
+          <div class="pep-step"><div class="pep-step-num">05 →</div><div class="pep-step-title">SOE Executives</div><div class="pep-step-sub">State Corporations / CMD / MD</div></div>
+          <div class="pep-step"><div class="pep-step-num">06 →</div><div class="pep-step-title">Political Party</div><div class="pep-step-sub">Party Presidents / Treasurers</div></div>
+          <div class="pep-step"><div class="pep-step-num">07 →</div><div class="pep-step-title">Intl Org Heads</div><div class="pep-step-sub">UN, WHO, IMF senior officials</div></div>
+          <div class="pep-step"><div class="pep-step-num">08 →</div><div class="pep-step-title">Family Members</div><div class="pep-step-sub">Spouses, Children, Siblings</div></div>
+          <div class="pep-step"><div class="pep-step-num">09</div><div class="pep-step-title">Close Associates</div><div class="pep-step-sub">Legal agents, business partners</div></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:600;">◎ Searchable PEP Reference Database</div>
+            <span class="badge badge-blue">Database Count: 25 Registered</span>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">Query our 2026 local register consisting of prominent international and Indian figures. Use any name to simulate the search experience.</div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <input id="pep-search" placeholder="Query Name, Post or Ref-ID..." style="flex:1;" onkeydown="if(event.key==='Enter')runPEP()">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+            <select id="pep-jur"><option value="">All Jurisdictions</option><option>India</option><option>United States</option><option>United Kingdom</option><option>France</option><option>Russia</option><option>China</option><option>Pakistan</option><option>Saudi Arabia</option><option>UAE</option><option>Kenya</option><option>Nigeria</option><option>Brazil</option></select>
+            <select id="pep-status"><option value="">All Office States</option><option value="current">Current</option><option value="former">Former</option></select>
+          </div>
+          <button class="btn btn-primary" style="width:100%;" onclick="runPEP()">⊕ Run PEP Database Query</button>
+          <div id="pep-results" style="margin-top:14px;"></div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:13px;font-weight:600;margin-bottom:14px;">◈ PEP EDD Compliance Standards</div>
+          <div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:12px;">Anchor: PMLA Rule 9(1A) &amp; FATF R.12</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="card-sm" style="border-color:rgba(245,158,11,0.3);">
+              <div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:6px;">01. Identity &amp; Credentials Verification</div>
+              <div style="font-size:11px;color:var(--text2);line-height:1.5;">Confirm identity across at least 2 distinct independent data streams. Obtain full biographical details, past portfolios, and active adverse press filings within 30 days.</div>
+            </div>
+            <div class="card-sm" style="border-color:rgba(245,158,11,0.3);">
+              <div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:6px;">02. Source of Wealth Verification (SOW)</div>
+              <div style="font-size:11px;color:var(--text2);line-height:1.5;">Must obtain audited net worth, tax registry schedules, public asset disclosures, land contracts, or certified cash flow indexes validating the origin of funds and wealth.</div>
+            </div>
+            <div class="card-sm" style="border-color:rgba(245,158,11,0.3);">
+              <div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:6px;">03. Board Approval &amp; High Frequency Audits</div>
+              <div style="font-size:11px;color:var(--text2);line-height:1.5;">Account requires written senior management sign-off at onboarding. Quarterly review minimum. Enhanced transaction monitoring mandatory. 24-month post-exit watch period.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== FATF ========== -->
+    <div class="page" id="page-fatf">
+      <div class="sec-header">
+        <div>
+          <div class="sec-title">FATF High-Risk &amp; Monitored Jurisdictions</div>
+          <div class="sec-sub">Updated: February 2026 Plenary · Next update: June 2026</div>
+        </div>
+        <input id="fatf-search" placeholder="Filter by country name..." style="width:220px;" oninput="filterFATF()">
+      </div>
+
+      <div class="card" style="margin-bottom:16px;border-color:rgba(239,68,68,0.3);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="color:var(--red);font-size:14px;">⊕</span><span style="font-size:14px;font-weight:700;">FATF Blacklist — High Risk Call For Action Jurisdictions</span></div>
+        <div style="font-size:11px;color:var(--red);font-family:var(--mono);margin-bottom:10px;">Mandatory Counter-measures &amp; Absolute Regulatory Strictures</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">In alignment with <strong style="color:var(--text);">FATF Recommendation 19</strong>, financial transactions originating or terminating in Blacklisted countries are subject to direct block or mandatory Board-level override. Filing of an immediate Suspicious Transaction Report (STR) to FIU-IND is required under Ministry of Finance directives.</div>
+        <div class="three-col">
+          <div class="country-card blacklist">
+            <div class="c-name">🇮🇷 Iran</div>
+            <div class="c-meta">Added: June 2008</div>
+            <div style="font-size:11px;color:var(--text2);margin:6px 0;line-height:1.4;">Significant structural deficiencies in countering money laundering and terrorist financing.</div>
+            <div style="display:flex;gap:6px;margin-top:6px;"><span class="badge badge-red">HIGH RISK</span><span class="badge badge-red">IMMEDIATE STR FILE</span></div>
+          </div>
+          <div class="country-card blacklist">
+            <div class="c-name">🇰🇵 North Korea (DPRK)</div>
+            <div class="c-meta">Added: October 2011</div>
+            <div style="font-size:11px;color:var(--text2);margin:6px 0;line-height:1.4;">Failure to address significant deficiencies in AML/CFT regime posing serious threats to the international financial system.</div>
+            <div style="display:flex;gap:6px;margin-top:6px;"><span class="badge badge-red">HIGH RISK</span><span class="badge badge-red">IMMEDIATE STR FILE</span></div>
+          </div>
+          <div class="country-card blacklist">
+            <div class="c-name">🇲🇲 Myanmar</div>
+            <div class="c-meta">Added: October 2022</div>
+            <div style="font-size:11px;color:var(--text2);margin:6px 0;line-height:1.4;">Lack of progress implementing action plan on mutual legal assistance, domestic supervision, and preventive measures.</div>
+            <div style="display:flex;gap:6px;margin-top:6px;"><span class="badge badge-red">HIGH RISK</span><span class="badge badge-red">IMMEDIATE STR FILE</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:14px;font-weight:600;">⊕ FATF Greylist — Increased Monitoring Registry (22)</div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px;">Jurisdictions negotiating active reform action plans with FATF plenary supervisors.</div>
+          <div id="grey-grid" class="country-grid" style="max-height:420px;overflow-y:auto;"></div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:14px;font-weight:600;margin-bottom:14px;">◫ FATF Monitoring History Plenary Log</div>
+          <div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:14px;">Chronicle (Feb 2023 – Feb 2026 Plenary)</div>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-dot tl-dot-blue">Feb</div><div class="tl-content"><div class="tl-label">February 2026 Plenary</div><div class="tl-meta">Added Kuwait, Papua New Guinea under increased monitoring (grey list).</div></div></div>
+            <div class="tl-item"><div class="tl-dot tl-dot-blue">Oct</div><div class="tl-content"><div class="tl-label">October 2025 Plenary</div><div class="tl-meta">Removed Burkina Faso, Mozambique, Nigeria, South Africa from increased monitoring.</div></div></div>
+            <div class="tl-item"><div class="tl-dot tl-dot-blue">Jun</div><div class="tl-content"><div class="tl-label">June 2025 Plenary</div><div class="tl-meta">Added Bolivia, British Virgin Islands. Removed Croatia, Mali, Tanzania.</div></div></div>
+            <div class="tl-item"><div class="tl-dot tl-dot-amber">Feb</div><div class="tl-content"><div class="tl-label">February 2025 Plenary</div><div class="tl-meta">Added Laos, Nepal. Removed Philippines after completing action plan.</div></div></div>
+            <div class="tl-item"><div class="tl-dot tl-dot-amber">Oct</div><div class="tl-content"><div class="tl-label">October 2024 Plenary</div><div class="tl-meta">Added Algeria, Angola, Côte d'Ivoire, Lebanon. Removed Senegal.</div></div></div>
+            <div class="tl-item"><div class="tl-dot tl-dot-grey">Feb</div><div class="tl-content"><div class="tl-label">February 2024 Plenary</div><div class="tl-meta">UAE removed after comprehensive AML/CFT overhaul — landmark reform exit.</div></div></div>
+            <div class="tl-item"><div class="tl-dot tl-dot-grey">Jun</div><div class="tl-content"><div class="tl-label">June 2024 Plenary</div><div class="tl-meta">Added Monaco, Venezuela. Removed Jamaica, Turkey.</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px;">Compliance Obligations Matrix by FATF Status</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Status</th><th>Due Diligence</th><th>Approval Required</th><th>Monitoring Cycle</th><th>Reporting</th><th>PMLA Reference</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge badge-grey">Low Risk</span></td><td>SDD</td><td>Relationship Manager</td><td>Annual</td><td>CTR if applicable</td><td>Rule 9</td></tr>
+              <tr><td><span class="badge badge-blue">Standard</span></td><td>CDD</td><td>Compliance Officer</td><td>Semi-Annual</td><td>CTR + STR triggered</td><td>Rule 9, S.12</td></tr>
+              <tr><td><span class="badge badge-amber">Grey List</span></td><td>EDD — Mandatory</td><td>Senior Management</td><td>Quarterly</td><td>Enhanced STR obligations</td><td>Rule 9(1B), S.12</td></tr>
+              <tr><td><span class="badge badge-red">Blacklist</span></td><td>Counter-measures</td><td>Board Level</td><td>Real-time</td><td>Immediate STR + escalation</td><td>S.12A, UA(P)A</td></tr>
+              <tr><td><span class="badge badge-purple">PEP</span></td><td>EDD — Mandatory</td><td>Senior Management</td><td>Quarterly + event</td><td>STR on suspicion</td><td>Rule 9(1A)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== STR ========== -->
+    <div class="page" id="page-str">
+      <div class="sec-header">
+        <div>
+          <div class="sec-title">Suspicious Transaction Report Drafting</div>
+          <div class="sec-sub">FIU-IND Pre-Submission Workspace — Internal draft tool only</div>
+        </div>
+      </div>
+
+      <div class="alert alert-red">
+        <span class="alert-icon">⊕</span>
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.06em;margin-bottom:4px;">CONFIDENTIAL ESCALATION PORTAL — FIU-IND PRE-SUBMISSION PROTOCOLS</div>
+          <strong>TIPPING-OFF CRIME:</strong> In accordance with <strong>Section 14A of PMLA</strong>, informing or tipping off any client regarding active suspicion reports is a major criminal offence subject to direct imprisonment. Information gathered in this sheet must remain heavily secured. Submit drafts exclusively through the secure FIU-IND FINnet Portal.
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:600;">◧ FIU-IND Alert Preparation Workspace (STR Form)</div>
+            <span class="badge badge-blue">STR DRAFTER</span>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">Draft structured suspicious activity profiles; calculate filing calendars and compile audits.</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="two-col" style="gap:12px;">
+              <div class="form-group"><label>Subject Name <span class="req">*</span></label><input id="s-name" placeholder="Name of entity or individual under suspicion"></div>
+              <div class="form-group"><label>Account / KYC Reference Number</label><input id="s-ref" placeholder="e.g. KYC-2026-06-7182"></div>
+            </div>
+            <div class="two-col" style="gap:12px;">
+              <div class="form-group"><label>Date Suspicion Arose</label><input type="date" id="s-date"></div>
+              <div class="form-group"><label>Core Suspicion Type <span class="req">*</span></label>
+                <select id="s-type"><option value="">Select</option><option>Structuring / Smurfing Action</option><option>Unusual Large Cash Transaction</option><option>Rapid Movement of Funds</option><option>PEP-Related Concern</option><option>FATF High-Risk Country Transaction</option><option>Layering Through Multiple Accounts</option><option>Source of Funds Inconsistency</option><option>Sanctions Name Match</option><option>Terrorism Financing Suspicion</option><option>Proliferation Financing Suspicion</option><option>Fraud Indicators</option></select>
+              </div>
+            </div>
+            <div class="form-group"><label>Approx. Transaction Amount Involved (INR)</label><input id="s-amount" placeholder="e.g. 25,00,000" type="number"></div>
+            <div class="form-group"><label>Suspicious Activity Forensic Description <span class="req">*</span></label><textarea id="s-desc" style="min-height:110px;" placeholder="Provide exhaustive details on flow irregularities, audit mismatches, tipping checks or structuring indicators..."></textarea></div>
+            <div>
+              <label style="display:block;margin-bottom:8px;">Identified Compliance Red Flags (Multi-Select)</label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;" id="red-flags">
+                <label style="font-weight:400;display:flex;align-items:center;gap:7px;font-size:11px;cursor:pointer;background:var(--bg3);padding:8px 10px;border-radius:6px;border:1px solid var(--border);"><input type="checkbox" value="structuring"> Structuring / Smurfing Indicator</label>
+                <label style="font-weight:400;display:flex;align-items:center;gap:7px;font-size:11px;cursor:pointer;background:var(--bg3);padding:8px 10px;border-radius:6px;border:1px solid var(--border);"><input type="checkbox" value="cash"> Unusual physical cash volume velocity</label>
+                <label style="font-weight:400;display:flex;align-items:center;gap:7px;font-size:11px;cursor:pointer;background:var(--bg3);padding:8px 10px;border-radius:6px;border:1px solid var(--border);"><input type="checkbox" value="shell"> Opaque Shell corporate indicator</label>
+                <label style="font-weight:400;display:flex;align-items:center;gap:7px;font-size:11px;cursor:pointer;background:var(--bg3);padding:8px 10px;border-radius:6px;border:1px solid var(--border);"><input type="checkbox" value="geo"> Geographic risk mismatch (FATF zones)</label>
+                <label style="font-weight:400;display:flex;align-items:center;gap:7px;font-size:11px;cursor:pointer;background:var(--bg3);padding:8px 10px;border-radius:6px;border:1px solid var(--border);"><input type="checkbox" value="velocity"> Velocity spike / high volume frequency</label>
+                <label style="font-weight:400;display:flex;align-items:center;gap:7px;font-size:11px;cursor:pointer;background:var(--bg3);padding:8px 10px;border-radius:6px;border:1px solid var(--border);"><input type="checkbox" value="roundtrip"> Round-tripping of funds (foreign accounts)</label>
+                <label style="font-weight:400;display:flex;align-items:center;gap:7px;font-size:11px;cursor:pointer;background:var(--bg3);padding:8px 10px;border-radius:6px;border:1px solid var(--border);"><input type="checkbox" value="ubo"> UBO concealment / nominee structures</label>
+                <label style="font-weight:400;display:flex;align-items:center;gap:7px;font-size:11px;cursor:pointer;background:var(--bg3);padding:8px 10px;border-radius:6px;border:1px solid var(--border);"><input type="checkbox" value="tipping"> Customer awareness of monitoring (tip-off risk)</label>
+              </div>
+            </div>
+            <div class="form-group"><label>Prepared By (Compliance Officer)</label><input id="s-by" placeholder="Name and designation"></div>
+            <button class="btn btn-primary" style="width:100%;" onclick="genSTR()">Generate STR Draft →</button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="card">
+            <div style="font-size:13px;font-weight:600;margin-bottom:12px;">◫ FIU-IND Regulatory Threshold Chart</div>
+            <div class="acc-item">
+              <div class="acc-head" onclick="toggleAcc(this)"><span style="font-weight:600;color:var(--red);">● Suspicious Transaction Report (STR)</span><span class="acc-arrow">▾</span></div>
+              <div class="acc-body open"><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;"><span style="color:var(--text3);">Filing window</span><span style="color:var(--text3);">Trigger limits</span></div><div style="display:flex;justify-content:space-between;font-weight:600;font-size:12px;margin-bottom:8px;"><span>Within 7 working days of satisfaction of suspicion</span><span style="color:var(--green);">No financial floor / zero limit</span></div><div style="font-size:11px;color:var(--text3);">PMLA Basis: Binds compliance officers under Section 12, PMLA 2002. Absolute prohibition on tipping off.</div></div>
+            </div>
+            <div class="acc-item">
+              <div class="acc-head" onclick="toggleAcc(this)"><span>● Cash Transaction Report (CTR)</span><span class="acc-arrow">▾</span></div>
+              <div class="acc-body"><div style="font-size:12px;color:var(--text2);">All cash transactions above <strong>₹10 Lakhs</strong> (or equivalent in foreign currency) in a single day. Monthly filing obligation with FIU-IND. Covers deposits, withdrawals, and exchanges.</div></div>
+            </div>
+            <div class="acc-item">
+              <div class="acc-head" onclick="toggleAcc(this)"><span>● Counterfeit Currency Report (CCR)</span><span class="acc-arrow">▾</span></div>
+              <div class="acc-body"><div style="font-size:12px;color:var(--text2);">Immediate filing when counterfeit currency notes are tendered or discovered. Report to FIU-IND and local police / RBI as appropriate.</div></div>
+            </div>
+            <div class="acc-item">
+              <div class="acc-head" onclick="toggleAcc(this)"><span>● Cross-Border Wire Transfers (CBWTR)</span><span class="acc-arrow">▾</span></div>
+              <div class="acc-body"><div style="font-size:12px;color:var(--text2);">All cross-border wire transfers of <strong>₹5 Lakhs or more</strong> (or equivalent). Monthly filing. Covers both incoming and outgoing international transfers.</div></div>
+            </div>
+            <div class="acc-item">
+              <div class="acc-head" onclick="toggleAcc(this)"><span>● Non-Profit Transactions Report (NTR)</span><span class="acc-arrow">▾</span></div>
+              <div class="acc-body"><div style="font-size:12px;color:var(--text2);">Transactions involving Non-Profit Organisations above ₹10 Lakhs. Enhanced monitoring per FATF Recommendation 8 on NPO sector abuse for terrorism financing.</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="font-size:13px;font-weight:600;margin-bottom:12px;">STR Draft Output</div>
+            <div id="str-output"><div style="text-align:center;padding:20px;color:var(--text3);font-size:12px;">Complete the form and click "Generate STR Draft" to produce a structured report.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== GLOSSARY ========== -->
+    <div class="page" id="page-glossary">
+      <div class="sec-header">
+        <div>
+          <div class="sec-title">Regulatory Compliance Glossary Index</div>
+          <div class="sec-sub">Searchable quick-reference database — 46 key global and Indian AML/KYC terms defined</div>
+        </div>
+        <input id="gloss-search" placeholder="Search by term name or operational scope..." style="width:260px;" oninput="filterGloss()">
+      </div>
+
+      <div class="two-col" style="margin-bottom:16px;">
+        <div class="card">
+          <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:10px;font-family:var(--mono);">⚖ INDIA KEY AML / KYC LAWS</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:11px;">
+            <div><div style="color:var(--blue);font-weight:600;margin-bottom:2px;">PMLA 2002</div><div style="color:var(--text2);line-height:1.5;">Primary statutory weapon criminalising the concealment, acquisition, possession, and use of proceeds of scheduled crimes. Defines the scope of the offence and the attachment powers.</div></div>
+            <div><div style="color:var(--blue);font-weight:600;margin-bottom:2px;">PML Rules 2005</div><div style="color:var(--text2);line-height:1.5;">Defines exact requirements regarding verification of client identity (Aadhaar/PAN/OTP rules), records maintenance, and thresholds for filing CTRs, STRs, CBWTRs.</div></div>
+            <div><div style="color:var(--blue);font-weight:600;margin-bottom:2px;">FEMA 1999</div><div style="color:var(--text2);line-height:1.5;">Coordinates with PMLA governing all cross-border holdings, remittance caps, and reporting structures for foreign currencies flowing in or out of the country.</div></div>
+            <div><div style="color:var(--blue);font-weight:600;margin-bottom:2px;">UA(P)A 2008 Amendment</div><div style="color:var(--text2);line-height:1.5;">Binds the financial system to freeze immediately any active or potential account related to entities locked in the national terror registry managed by Ministry of Home Affairs.</div></div>
+            <div style="color:var(--text3);font-size:10px;">Other frameworks: Companies Act (S.90), IPC S.120B, RBI Master Circulars, SEBI PMLA Guidelines, IRDAI AML Guidelines.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:10px;font-family:var(--mono);">◈ FATF 40 RECOMMENDATIONS</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--text2);">
+            <div><strong style="color:var(--text);">Recommendation 10</strong> — Defines full mandate for CDD: requiring confirmation of beneficial owners, business purpose, and prohibiting banks from hosting anonymous/numbered accounts.</div>
+            <div><strong style="color:var(--text);">Recommendation 11</strong> — Record keeping: all CDD documents and transaction records retained for minimum 5 years.</div>
+            <div><strong style="color:var(--text);">Recommendation 12</strong> — PEPs: EDD mandatory for foreign PEPs, domestic PEPs, international organisation officials and their family members / close associates.</div>
+            <div><strong style="color:var(--text);">Recommendation 16</strong> — Wire transfers: originator and beneficiary information must accompany all wire transfers.</div>
+            <div><strong style="color:var(--text);">Recommendation 19</strong> — Higher-risk countries: EDD or counter-measures for jurisdictions with strategic AML/CFT deficiencies.</div>
+            <div><strong style="color:var(--text);">Recommendation 20</strong> — STR: mandatory filing when there are reasonable grounds to suspect ML/TF.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px;">Interactive Compliance Glossary</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">Searchable quick-reference database containing definitions for 46 key global and Indian AML frameworks.</div>
+        <div id="gloss-list"></div>
+      </div>
+    </div>
+
+  </div><!-- end .content -->
+</div><!-- end .main -->
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const GREY_LIST = [
+  {name:"Algeria",flag:"🇩🇿",added:"Oct 2024",reason:"EDD/supervision gaps"},
+  {name:"Angola",flag:"🇦🇴",added:"Oct 2024",reason:"AML framework deficiencies"},
+  {name:"Bolivia",flag:"🇧🇴",added:"Jun 2025",reason:"DNFBP supervision, UBO gaps"},
+  {name:"Bulgaria",flag:"🇧🇬",added:"Oct 2023",reason:"Beneficial ownership gaps"},
+  {name:"Cameroon",flag:"🇨🇲",added:"Jun 2023",reason:"ML/TF investigation gaps"},
+  {name:"Côte d'Ivoire",flag:"🇨🇮",added:"Oct 2024",reason:"ML prosecution deficiencies"},
+  {name:"DR Congo",flag:"🇨🇩",added:"Jun 2022",reason:"AML framework, supervision"},
+  {name:"Haiti",flag:"🇭🇹",added:"Jun 2020",reason:"Systemic AML/CFT weaknesses"},
+  {name:"Kenya",flag:"🇰🇪",added:"Jun 2024",reason:"ML/TF prosecution gaps"},
+  {name:"Kuwait",flag:"🇰🇼",added:"Feb 2026",reason:"2024 MER deficiencies"},
+  {name:"Laos (Lao PDR)",flag:"🇱🇦",added:"Feb 2025",reason:"Implementation & enforcement"},
+  {name:"Lebanon",flag:"🇱🇧",added:"Oct 2024",reason:"AML institutional gaps"},
+  {name:"Monaco",flag:"🇲🇨",added:"Jun 2024",reason:"Beneficial ownership, DNFBP"},
+  {name:"Namibia",flag:"🇳🇦",added:"Feb 2022",reason:"ML prosecution, supervision"},
+  {name:"Nepal",flag:"🇳🇵",added:"Feb 2025",reason:"Legislative-implementation gap"},
+  {name:"Papua New Guinea",flag:"🇵🇬",added:"Feb 2026",reason:"ML/TF framework deficiencies"},
+  {name:"South Sudan",flag:"🇸🇸",added:"Jun 2021",reason:"Fundamental AML gaps"},
+  {name:"Syria",flag:"🇸🇾",added:"Feb 2010",reason:"Long-term AML/CFT deficiencies"},
+  {name:"Venezuela",flag:"🇻🇪",added:"Jun 2024",reason:"AML supervision, UBO"},
+  {name:"Vietnam",flag:"🇻🇳",added:"Jun 2023",reason:"ML/TF investigation weaknesses"},
+  {name:"British Virgin Islands",flag:"🇻🇬",added:"Jun 2025",reason:"Offshore AML concerns"},
+  {name:"Yemen",flag:"🇾🇪",added:"Feb 2010",reason:"Long-term AML/CFT deficiencies"},
+];
+
+const PEPS = [
+  {ref:"PEP-001",name:"Narendra Modi",country:"India",position:"Prime Minister of India",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-002",name:"Joe Biden",country:"United States",position:"Former President of the United States",category:"Head of State / Government",status:"former"},
+  {ref:"PEP-003",name:"Donald Trump",country:"United States",position:"President of the United States",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-004",name:"Keir Starmer",country:"United Kingdom",position:"Prime Minister of the United Kingdom",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-005",name:"Rishi Sunak",country:"United Kingdom",position:"Former Prime Minister",category:"Head of State / Government",status:"former"},
+  {ref:"PEP-006",name:"Emmanuel Macron",country:"France",position:"President of France",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-007",name:"Xi Jinping",country:"China",position:"President / General Secretary CPC",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-008",name:"Vladimir Putin",country:"Russia",position:"President of Russia",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-009",name:"Amit Shah",country:"India",position:"Home Minister of India",category:"Senior Government Official",status:"current"},
+  {ref:"PEP-010",name:"Nirmala Sitharaman",country:"India",position:"Finance Minister of India",category:"Senior Government Official",status:"current"},
+  {ref:"PEP-011",name:"Sanjiv Khanna",country:"India",position:"Chief Justice of India",category:"Senior Judicial Official",status:"current"},
+  {ref:"PEP-012",name:"D.Y. Chandrachud",country:"India",position:"Former Chief Justice of India",category:"Senior Judicial Official",status:"former"},
+  {ref:"PEP-013",name:"Shaktikanta Das",country:"India",position:"Former RBI Governor",category:"Senior Government Official",status:"former"},
+  {ref:"PEP-014",name:"Rahul Gandhi",country:"India",position:"Leader of Opposition / INC",category:"Senior Political Party Official",status:"current"},
+  {ref:"PEP-015",name:"Arvind Kejriwal",country:"India",position:"AAP National Convenor / Former CM Delhi",category:"Senior Political Party Official",status:"former"},
+  {ref:"PEP-016",name:"Shehbaz Sharif",country:"Pakistan",position:"Prime Minister of Pakistan",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-017",name:"Nawaz Sharif",country:"Pakistan",position:"PML-N President / Former PM (3 terms)",category:"Senior Political Party Official",status:"former"},
+  {ref:"PEP-018",name:"Imran Khan",country:"Pakistan",position:"PTI Chairman / Former Prime Minister",category:"Senior Political Party Official",status:"former"},
+  {ref:"PEP-019",name:"Mohammed bin Salman",country:"Saudi Arabia",position:"Crown Prince / Prime Minister",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-020",name:"Sheikh Mohammed bin Rashid",country:"UAE",position:"PM of UAE / Ruler of Dubai",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-021",name:"Lula da Silva",country:"Brazil",position:"President of Brazil",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-022",name:"William Ruto",country:"Kenya",position:"President of Kenya",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-023",name:"Bola Tinubu",country:"Nigeria",position:"President of Nigeria",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-024",name:"Claudia Sheinbaum",country:"Mexico",position:"President of Mexico",category:"Head of State / Government",status:"current"},
+  {ref:"PEP-025",name:"T.V. Somanathan",country:"India",position:"Cabinet Secretary of India",category:"Senior Government Official",status:"current"},
+];
+
+const GLOSSARY = [
+  {term:"AML",scope:"Global & Domestic Legislation (PMLA Section 12)",def:"Anti-Money Laundering — a set of policies, laws, and regulations designed to prevent the practice of generating income through illegal actions."},
+  {term:"KYC",scope:"PML Rule 9 & RBI Master Directions",def:"Know Your Customer — the mandatory process of identifying and verifying the identity of the customer during onboarding and periodically thereafter."},
+  {term:"CDD",scope:"FATF Recommendation 10 & PML Rules (Rule 9)",def:"Customer Due Diligence — steps taken by financial institutions to identify their customers and verify who they say they are. Involves standard ID, address proof, and activity checks."},
+  {term:"EDD",scope:"PMLA Section 12AA & FATF Recommendation 19",def:"Enhanced Due Diligence — additional research and deep validation required for high-risk customers, suspicious transactions, PEPs, or clients with links to FATF-listed countries."},
+  {term:"SDD",scope:"RBI KYC Master Directions & FATF Recommendation 10",def:"Simplified Due Diligence — a lower level of compliance screening applied where the risk of money laundering or terrorist financing is demonstrably low (e.g. regulated FIs, listed companies)."},
+  {term:"ODD",scope:"FATF Recommendation 10 & PMLA Rule 9",def:"Ongoing Due Diligence — continuous monitoring of the business relationship and transactions to ensure consistency with the customer's profile and risk classification."},
+  {term:"PEP",scope:"FATF Recommendation 12 & PMLA Rule 9(1A)",def:"Politically Exposed Person — an individual entrusted with a prominent public function. Includes heads of state, senior politicians, judicial/military officials, SOE executives, and their family members and close associates."},
+  {term:"UBO",scope:"Companies Act 2013 S.90 & PMLA Rule 9",def:"Ultimate Beneficial Owner — the natural person(s) who ultimately own or control a customer. Threshold: 25% ownership or effective control under PMLA and Companies Act 2013."},
+  {term:"STR",scope:"PMLA Section 12 & PML Rules 2005",def:"Suspicious Transaction Report — mandatory report filed with FIU-IND within 7 working days when a transaction is suspected to involve proceeds of crime or terrorism financing. No minimum threshold."},
+  {term:"CTR",scope:"PML Rules 2005 Rule 3",def:"Cash Transaction Report — mandatory monthly report to FIU-IND for all cash transactions above ₹10 Lakhs in a single day including deposits, withdrawals, and exchanges."},
+  {term:"SAR",scope:"Global (US FinCEN, FINTRAC)",def:"Suspicious Activity Report — international equivalent of STR. Used in the US, UK, and other jurisdictions. India's equivalent is the STR filed with FIU-IND."},
+  {term:"CBWTR",scope:"PML Rules 2005 Rule 3(1)(C)",def:"Cross-Border Wire Transfer Report — monthly report of all international wire transfers of ₹5 Lakhs or more. Covers both incoming and outgoing transfers per FIU-IND notification."},
+  {term:"FIU-IND",scope:"PMLA 2002 Section 12",def:"Financial Intelligence Unit — India. The central agency under the Ministry of Finance responsible for receiving, processing, analysing, and disseminating financial intelligence on suspicious transactions."},
+  {term:"FATF",scope:"International Standards Body",def:"Financial Action Task Force — intergovernmental body (39 members) that sets international standards for combating money laundering, terrorist financing, and proliferation financing. Established 1989 by G7."},
+  {term:"PMLA",scope:"India — Primary AML Legislation",def:"Prevention of Money Laundering Act, 2002 — India's primary AML law. Criminalises money laundering, establishes obligations for reporting entities, and provides for attachment and confiscation of proceeds of crime."},
+  {term:"FEMA",scope:"India — Foreign Exchange Law",def:"Foreign Exchange Management Act, 1999 — governs foreign exchange transactions in India. Violations can constitute predicate offences under PMLA."},
+  {term:"UA(P)A",scope:"India — Counter-Terrorism Law",def:"Unlawful Activities (Prevention) Act — enables immediate freezing of accounts linked to entities on the national terror registry. Administered by Ministry of Home Affairs."},
+  {term:"OFAC",scope:"US Treasury — Sanctions Authority",def:"Office of Foreign Assets Control — US Treasury agency that administers and enforces economic and trade sanctions. The SDN (Specially Designated Nationals) list is a primary global screening database."},
+  {term:"SDN List",scope:"OFAC — US Sanctions",def:"Specially Designated Nationals List — maintained by OFAC. Contains names of individuals and entities with whom US persons are generally prohibited from dealing. Critical for KYC sanctions screening."},
+  {term:"Risk-Based Approach",scope:"FATF Core Principle",def:"Core FATF principle requiring that AML/CFT resources and controls be proportionate to the level of ML/TF risk. Higher risk = greater scrutiny. Must be documented in the institution's risk assessment."},
+  {term:"Predicate Offence",scope:"FATF 40 Recommendations & PMLA Schedule",def:"The underlying criminal activity that generates the proceeds that are then laundered. PMLA Schedule lists designated offences including drug trafficking, corruption, terrorism, kidnapping, and more."},
+  {term:"Layering",scope:"Three Stages of Money Laundering",def:"Second stage of money laundering — a complex series of financial transactions designed to distance funds from their criminal origin. Involves wire transfers, shell companies, and offshore accounts."},
+  {term:"Placement",scope:"Three Stages of Money Laundering",def:"First stage of money laundering — the physical disposal of cash proceeds of crime. Involves depositing illegal cash into the financial system (e.g. bank deposits, currency exchanges, smurfing)."},
+  {term:"Integration",scope:"Three Stages of Money Laundering",def:"Third stage of money laundering — reintroducing laundered funds into the legitimate economy, making them appear as normal business earnings (e.g. real estate investment, luxury assets)."},
+  {term:"Smurfing",scope:"AML Red Flag — Structuring",def:"Structuring transactions below reporting thresholds (₹10L CTR threshold in India) across multiple transactions or accounts to avoid detection. Also known as structuring. A primary AML red flag."},
+  {term:"MVTS",scope:"FATF Recommendation 14",def:"Money or Value Transfer Services — formal or informal services that transfer money or value (e.g. hawala, Western Union). High ML/TF risk sector subject to specific FATF R.14 licensing and AML obligations."},
+  {term:"Correspondent Banking",scope:"FATF Recommendation 13",def:"Services provided by one bank (correspondent) to another (respondent), typically across borders. High risk for layering. Subject to enhanced due diligence under FATF R.13."},
+  {term:"Tipping Off",scope:"PMLA Section 14A",def:"Criminal offence — informing a subject that they are under suspicion or that an STR has been filed. Strictly prohibited under PMLA S.14A. Punishable with imprisonment. Applies to all employees."},
+  {term:"CFT",scope:"FATF Recommendations 5–8",def:"Counter-Financing of Terrorism — measures to detect, prevent, and disrupt the financing of terrorist activities. Covered by FATF R.5–8 and UNSC Resolution 1373."},
+  {term:"CPF",scope:"FATF Recommendation 7",def:"Counter-Proliferation Financing — preventing the financing of weapons of mass destruction. Added to FATF framework post-2012. FATF R.7 covers targeted financial sanctions for proliferation."},
+  {term:"MER",scope:"FATF Mutual Evaluation Process",def:"Mutual Evaluation Report — FATF's country-level assessment of AML/CFT framework effectiveness. Poor MER findings can trigger grey/blacklisting. India's last MER was 2023–24."},
+  {term:"DNFBP",scope:"FATF Recommendations 22–23",def:"Designated Non-Financial Businesses and Professions — real estate agents, jewellers, accountants, lawyers, trust/company service providers. Subject to AML/KYC obligations under FATF R.22–23."},
+  {term:"Beneficial Ownership",scope:"FATF Recommendation 24–25 & Companies Act S.90",def:"Requirement for legal persons to maintain accurate, current information on who ultimately owns or controls them. Threshold: 25% under most regimes. Filed in MCA's beneficial ownership registry."},
+  {term:"De-Risking",scope:"FATF Policy Concern",def:"Practice of banks exiting entire business lines or customer segments due to perceived ML/TF risk. FATF discourages blanket de-risking as it undermines financial inclusion and pushes transactions underground."},
+  {term:"Basel AML Index",scope:"Basel Institute on Governance",def:"Annual ranking of countries by ML/TF risk. Higher score = higher risk. Published by Basel Institute on Governance. Used as a supplementary country risk indicator alongside FATF lists."},
+  {term:"Shell Company",scope:"AML Risk Typology",def:"A company with no active business or assets used to conceal the beneficial owner of funds or assets. A primary vehicle for money laundering, tax evasion, and sanctions evasion."},
+  {term:"Round-Tripping",scope:"AML Typology — India-Specific",def:"A form of money laundering common in India where funds are sent abroad (often through hawala or shell companies) and returned as Foreign Direct Investment to appear legitimate."},
+  {term:"Hawala",scope:"MVTS — Informal Value Transfer",def:"An informal value transfer system operating outside or parallel to formal banking. Money is transferred via a network of brokers (hawaladars) without physical movement of cash. High ML/TF risk."},
+  {term:"Adverse Media",scope:"KYC Risk Assessment",def:"Negative news screening against a customer to identify links to financial crime, fraud, corruption, or sanctions. A required EDD step for high-risk customers and PEPs."},
+  {term:"SOF",scope:"KYC Due Diligence",def:"Source of Funds — documentation and explanation of the specific activity that generated the funds being used in the transaction (e.g. salary, business revenue, sale of property)."},
+  {term:"SOW",scope:"EDD — PEPs and High-Risk",def:"Source of Wealth — the origin of a customer's total net worth and assets. Distinct from SOF. Required for PEP EDD, cross-border wealth, and HNWIs. Must be verified against independent evidence."},
+  {term:"FINnet",scope:"FIU-IND Technology Platform",def:"Financial Intelligence Network — FIU-IND's secure online portal for submission of STRs, CTRs, CBWTRs, and other regulatory reports by reporting entities. Mandatory submission channel."},
+  {term:"Egmont Group",scope:"International FIU Network",def:"A network of 164 Financial Intelligence Units (FIUs) that facilitates the secure exchange of financial intelligence and information between member FIUs globally. India's FIU-IND is a member."},
+  {term:"Wolfsberg Group",scope:"Global Banking Standards",def:"An association of 13 global banks that develops financial crime compliance standards including AML/CFT principles for correspondent banking, trade finance, and private banking."},
+  {term:"Politically Exposed Person",scope:"FATF R.12 & PMLA Rule 9(1A)",def:"See PEP. An individual entrusted with a prominent public function. Extended definition includes family members and close associates. Triggers mandatory EDD regardless of transaction amount."},
+  {term:"KYC Re-verification",scope:"RBI Master Directions & ODD",def:"Periodic re-verification of customer identity and risk profile. Required every 2 years for high-risk, 8 years for medium-risk, and 10 years for low-risk customers per RBI Master Directions on KYC 2016."},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let stats = {total:0,high:0,pep:0};
+let kycData = {};
+let activity = [];
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+const PAGE_LABELS = {dashboard:'COMPLIANCE OVERVIEW',kyc:'KYC ONBOARDING & SCREENING DESK',pep:'POLITICALLY EXPOSED PERSONS SCREENING',fatf:'FATF HIGH-RISK & MONITORED JURISDICTIONS',str:'SUSPICIOUS TRANSACTION REPORT DRAFTING',glossary:'REGULATORY COMPLIANCE GLOSSARY INDEX'};
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const navs = document.querySelectorAll('.nav-item');
+  const ids = ['dashboard','kyc','pep','fatf','str','glossary'];
+  navs[ids.indexOf(id)].classList.add('active');
+  document.getElementById('page-label').textContent = PAGE_LABELS[id];
+}
+
+function copyURL() {
+  navigator.clipboard.writeText(window.location.href).then(()=>alert('URL copied!')).catch(()=>alert('Copy the URL from your browser address bar.'));
+}
+
+// ============================================================
+// FATF GREY LIST RENDER
+// ============================================================
+function renderGrey(filter='') {
+  const el = document.getElementById('grey-grid');
+  el.innerHTML = GREY_LIST.filter(c=>c.name.toLowerCase().includes(filter.toLowerCase())).map(c=>`
+    <div class="country-card greylist">
+      <div class="c-name">${c.flag} ${c.name}</div>
+      <div class="c-meta">Added: ${c.added}</div>
+      <div style="font-size:10px;color:var(--text2);margin:4px 0;">${c.reason}</div>
+      <span class="badge badge-amber">GREY LIST</span>
+    </div>`).join('');
+}
+renderGrey();
+function filterFATF(){renderGrey(document.getElementById('fatf-search').value);}
+
+// ============================================================
+// GLOSSARY RENDER
+// ============================================================
+function renderGloss(filter='') {
+  const el = document.getElementById('gloss-list');
+  const f = filter.toLowerCase();
+  el.innerHTML = GLOSSARY.filter(g=>g.term.toLowerCase().includes(f)||g.def.toLowerCase().includes(f)||g.scope.toLowerCase().includes(f)).map((g,i)=>`
+    <div class="gloss-item">
+      <div>
+        <div class="gloss-term">${i+1}. ${g.term}</div>
+        <div class="gloss-scope">${g.scope}</div>
+      </div>
+      <div class="gloss-def">${g.def}</div>
+    </div>`).join('');
+}
+renderGloss();
+function filterGloss(){renderGloss(document.getElementById('gloss-search').value);}
+
+// ============================================================
+// ACCORDION
+// ============================================================
+function toggleAcc(h) {
+  const b = h.nextElementSibling, a = h.querySelector('.acc-arrow');
+  const isOpen = b.classList.contains('open');
+  b.classList.toggle('open',!isOpen);
+  a.classList.toggle('open',!isOpen);
+}
+
+// ============================================================
+// ACTIVITY LOG
+// ============================================================
+function addActivity(title,meta,type) {
+  const icons = {info:'◈',warn:'⚠',danger:'⊕',success:'✓'};
+  const colors = {info:'var(--blue-dim)',warn:'var(--amber-dim)',danger:'var(--red-dim)',success:'var(--green-dim)'};
+  const iconColors = {info:'var(--blue)',warn:'var(--amber)',danger:'var(--red)',success:'var(--green)'};
+  activity.unshift({title,meta,type,time:new Date().toLocaleTimeString('en-IN')});
+  if(activity.length>8) activity.pop();
+  const el = document.getElementById('activity-log');
+  el.innerHTML = activity.map(a=>`
+    <div class="act-item">
+      <div class="act-icon" style="background:${colors[a.type]};color:${iconColors[a.type]};">${icons[a.type]}</div>
+      <div class="act-text"><strong>${a.title}</strong>${a.meta}</div>
+      <div class="act-time">${a.time}</div>
+    </div>`).join('');
+}
+
+// ============================================================
+// KYC WORKFLOW
+// ============================================================
+function kycGo(n) {
+  for(let i=1;i<=5;i++) {
+    const el=document.getElementById('ks'+i); if(el) el.style.display=(i===n)?'block':'none';
+    const s=document.getElementById('st'+i); if(s){s.className='step-item';if(i<n)s.classList.add('done');else if(i===n)s.classList.add('active');}
+  }
+  if(n===4) buildChecklist();
+}
+
+function kycStep1() {
+  const name=document.getElementById('k-name').value.trim();
+  const type=document.getElementById('k-type').value;
+  const nat=document.getElementById('k-nat').value;
+  if(!name||!type||!nat){alert('Please fill all required fields (*)');return;}
+  kycData.name=name; kycData.type=type; kycData.nat=document.getElementById('k-nat').options[document.getElementById('k-nat').selectedIndex].text;
+  kycData.natVal=nat; kycData.dob=document.getElementById('k-dob').value;
+  kycData.idType=document.getElementById('k-idtype').value; kycData.idNum=document.getElementById('k-idnum').value||'SIM-XXXX';
+  kycData.occ=document.getElementById('k-occ').value; kycData.sof=document.getElementById('k-sof').value;
+  kycData.ubo=document.getElementById('k-ubo').value; kycData.uboPct=document.getElementById('k-ubo-pct').value;
+  kycData.purpose=document.getElementById('k-purpose').value;
+  // Auto-flag FATF
+  if(nat==='black'&&document.getElementById('k-fatf').value==='no') document.getElementById('k-fatf').value='black';
+  if(nat==='grey'&&document.getElementById('k-fatf').value==='no') document.getElementById('k-fatf').value='grey';
+  kycGo(2);
+}
+
+function kycStep2() {
+  kycData.pep=document.getElementById('k-pep').value;
+  kycData.fatf=document.getElementById('k-fatf').value;
+  if(kycData.natVal==='black') kycData.fatf='black';
+  if(kycData.natVal==='grey'&&kycData.fatf==='no') kycData.fatf='grey';
+  kycData.media=document.getElementById('k-media').value;
+  kycData.sanc=document.getElementById('k-sanc').value;
+  kycData.vol=document.getElementById('k-vol').value;
+  kycData.struct=document.getElementById('k-struct').value;
+  kycData.sector=document.getElementById('k-sector').value;
+  kycData.str=document.getElementById('k-str').value;
+
+  let score=0;
+  if(kycData.pep==='domestic') score+=40;
+  else if(kycData.pep==='foreign') score+=45;
+  else if(kycData.pep==='associate') score+=30;
+  if(kycData.fatf==='black') score+=60;
+  else if(kycData.fatf==='grey') score+=30;
+  if(kycData.media==='major') score+=25;
+  else if(kycData.media==='minor') score+=10;
+  if(kycData.sanc==='confirmed') score+=50;
+  else if(kycData.sanc==='potential') score+=20;
+  if(kycData.vol==='high') score+=15;
+  if(kycData.struct==='yes') score+=20;
+  if(kycData.sector==='yes') score+=15;
+  if(kycData.str==='yes') score+=25;
+  if(kycData.sof==='Unknown') score+=20;
+  score=Math.min(score,100);
+  kycData.score=score;
+
+  let level,dd,colour,cycle;
+  if(kycData.sanc==='confirmed'||kycData.fatf==='black'){level='Critical';dd='REJECT / Escalate Immediately';colour='var(--red)';cycle='Immediate escalation — no onboarding';}
+  else if(score>=60||kycData.pep!=='no'||kycData.fatf==='grey'){level='High';dd='EDD — Enhanced Due Diligence';colour='var(--red)';cycle='Quarterly Review (Within 90 Days)';}
+  else if(score>=30){level='Medium';dd='CDD — Customer Due Diligence';colour='var(--amber)';cycle='Semi-Annual Review (Within 180 Days)';}
+  else{level='Low';dd='SDD — Simplified Due Diligence';colour='var(--green)';cycle='Annual Review (Within 365 Days)';}
+  kycData.level=level; kycData.dd=dd; kycData.colour=colour; kycData.cycle=cycle;
+
+  const flags=[];
+  if(kycData.pep!=='no') flags.push({l:'PEP Identified',c:'badge-red'});
+  if(kycData.fatf!=='no') flags.push({l:'FATF Risk Jurisdiction',c:'badge-amber'});
+  if(kycData.sanc!=='no') flags.push({l:'Sanctions Flag',c:'badge-red'});
+  if(kycData.media!=='none') flags.push({l:'Adverse Media',c:'badge-amber'});
+  if(kycData.vol==='high') flags.push({l:'High Transaction Volume (>₹10L)',c:'badge-amber'});
+  if(kycData.struct==='yes') flags.push({l:'Complex Structure',c:'badge-amber'});
+  if(kycData.sector==='yes') flags.push({l:'High-Risk Sector',c:'badge-red'});
+  if(kycData.str==='yes') flags.push({l:'Prior STR Filed',c:'badge-red'});
+  kycData.flags=flags;
+
+  const barW=score;
+  document.getElementById('risk-output').innerHTML=`
+    <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:16px;">
+      <div style="text-align:center;">
+        <div style="font-size:60px;font-weight:800;color:${colour};font-family:var(--mono);line-height:1;">${score}</div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--mono);">CALCULATED RISK SCORE / 100</div>
+        <div class="risk-bar" style="margin-top:8px;width:140px;"><div class="risk-fill" style="width:${barW}%;background:${colour};"></div></div>
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span class="badge ${level==='Low'?'badge-green':level==='Medium'?'badge-amber':'badge-red'}" style="font-size:12px;padding:4px 12px;">${level} Risk</span>
+          <span style="font-size:14px;font-weight:600;">${dd}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:10px;">RECURRENT REVIEW CYCLE: ${cycle}</div>
+        ${kycData.sanc==='confirmed'?'<div class="alert alert-red" style="margin-bottom:8px;"><span class="alert-icon">🚫</span><span>CONFIRMED SANCTIONS MATCH — Do not proceed. Immediate escalation to MLRO. File STR with FIU-IND immediately.</span></div>':''}
+        ${kycData.fatf==='black'?'<div class="alert alert-red" style="margin-bottom:8px;"><span class="alert-icon">🚫</span><span>FATF BLACKLIST JURISDICTION — Counter-measures mandatory. Board-level sign-off required.</span></div>':''}
+        ${kycData.pep!=='no'?'<div class="alert alert-amber" style="margin-bottom:8px;"><span class="alert-icon">⚠</span><span>PEP IDENTIFIED — EDD mandatory per FATF R.12 / PMLA Rule 9(1A). Senior management approval required.</span></div>':''}
+        ${kycData.fatf==='grey'?'<div class="alert alert-amber" style="margin-bottom:8px;"><span class="alert-icon">⚠</span><span>FATF GREY LIST — EDD mandatory. Enhanced transaction monitoring. Quarterly review required.</span></div>':''}
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">${flags.map(f=>`<span class="badge ${f.c}">${f.l}</span>`).join('')}</div>
+      </div>
+    </div>`;
+  kycGo(3);
+}
+
+function buildChecklist() {
+  const base = [
+    'Government Photo Identification (Passport / Aadhaar / PAN / National ID)',
+    'Proof of Address (Utility/Bank Statement ≤3 Months)',
+    'Source of Funds Questionnaire (Self-Certified)',
+    'Purpose of Relationship Declaration',
+    'Completed KYC Physical/Digital Form',
+  ];
+  const corp = [
+    'Certificate of Incorporation / Registration Document',
+    'Memorandum & Articles of Association',
+    'Board Resolution Authorising Relationship',
+    'KYC Documents for Each Director / Partner',
+    'UBO Declaration (25% Threshold) with Evidence',
+    'Audited Financial Statements (Last 2 Years)',
+  ];
+  const edd = [
+    'Source of Wealth Documentation (Asset declarations, Investment statements)',
+    'Independent Bank Reference / Wealth Manager Confirmation',
+    'Senior Management Onboarding Approval (Documented Sign-off)',
+    'Adverse Media Screening Report (Within 30 Days)',
+    'Sanctions Screening Certificate (OFAC, UN, EU, HMT, FIU-IND)',
+    'Enhanced Transaction Monitoring — Activation Confirmed',
+    'Quarterly Review Schedule — Calendar Entry Confirmed',
+  ];
+  const pep = [
+    'Political Position History Verified (2+ Independent Public Sources)',
+    'Public Asset / Wealth Declaration Cross-Reference',
+    'PEP Senior Management Onboarding Approval (Written)',
+    '24-Month Post-Exit Monitoring Plan Documented',
+  ];
+  let docs=[...base];
+  if(kycData.type!=='Individual') docs=[...docs,...corp];
+  if(kycData.level==='High'||kycData.level==='Critical') docs=[...docs,...edd];
+  if(kycData.pep!=='no') docs=[...docs,...pep];
+  kycData.docs=docs;
+  document.getElementById('doc-output').innerHTML=`
+    <div class="alert alert-blue" style="margin-bottom:14px;"><span class="alert-icon">◈</span><span>Due diligence type: <strong>${kycData.dd}</strong>. Check off each document as obtained and verified. All fields accept simulated/dummy data for practice.</span></div>
+    <div class="chk-list">${docs.map((d,i)=>`
+      <div class="chk-item" onclick="toggleChk(${i})">
+        <div class="chk-box" id="chk${i}"></div>
+        <span>${d}</span>
+      </div>`).join('')}
+    </div>`;
+}
+
+function toggleChk(i) {
+  const b=document.getElementById('chk'+i);
+  if(b.classList.contains('checked')){b.classList.remove('checked');b.textContent='';}
+  else{b.classList.add('checked');b.textContent='✓';}
+}
+
+function kycFinalize() {
+  stats.total++; if(kycData.level==='High'||kycData.level==='Critical') stats.high++;
+  document.getElementById('d-total').textContent=stats.total;
+  document.getElementById('d-high').textContent=stats.high;
+  const now=new Date();
+  const ref='KYC-'+now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(Math.floor(Math.random()*9000)+1000);
+  kycData.ref=ref;
+  addActivity(`KYC Certificate: ${kycData.name}`,` · ${kycData.level} Risk · ${kycData.dd.split(' — ')[0]}`,kycData.level==='Low'?'success':kycData.level==='Medium'?'warn':'danger');
+
+  document.getElementById('cert-output').innerHTML=`
+    <div class="cert">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div class="cert-inst">National Forensic Sciences University</div>
+          <div class="cert-title">Compliance Review Certificate</div>
+          <div class="cert-sub">Generated via India FIU-IND / PMLA Standards Integration</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:4px;">RECORD REFERENCE</div>
+          <div class="cert-ref">${ref}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;">ISSUED AT: ${now.toISOString().slice(0,19).replace('T',' ')}</div>
+        </div>
+      </div>
+      <div style="height:4px;background:linear-gradient(90deg,var(--blue),var(--purple),var(--amber),var(--red));border-radius:2px;margin-bottom:16px;"></div>
+      <div class="cert-meta">
+        <div class="cert-field">
+          <div class="cert-field-lbl">Calculated Risk Score</div>
+          <div class="cert-field-val" style="color:${kycData.colour};font-size:22px;">${kycData.score} <span style="font-size:13px;color:var(--text3);">/ 100</span></div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-lbl">Due Diligence Classification</div>
+          <div class="cert-field-val" style="font-size:13px;">${kycData.dd}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-lbl">Recurrent Review Cycle</div>
+          <div class="cert-field-val" style="font-size:12px;">${kycData.cycle}</div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Client Identity Specification</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
+        <div><div style="font-size:10px;color:var(--text3);">Full Name</div><div style="font-size:12px;font-weight:500;">${kycData.name}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);">Nationality / Location</div><div style="font-size:12px;font-weight:500;">${kycData.nat}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);">Primary Identification Document</div><div style="font-size:12px;font-weight:500;font-family:var(--mono);">${kycData.idType} : ${kycData.idNum}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);">Customer Type</div><div style="font-size:12px;font-weight:500;">${kycData.type}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);">Origin of Funds Source</div><div style="font-size:12px;font-weight:500;">${kycData.sof}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);">Purpose and Intent declared</div><div style="font-size:12px;font-weight:500;">${kycData.purpose||'Savings / Regular Operations'}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);">Beneficial Owner (UBO)</div><div style="font-size:12px;font-weight:500;">${kycData.ubo||kycData.name}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);">Date of Birth / Incorporation</div><div style="font-size:12px;font-weight:500;">${kycData.dob}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Adverse Risk Flags Identified</div>
+          ${kycData.flags.length===0?'<div style="font-size:12px;color:var(--green);">✓ No adverse risk flags identified</div>':kycData.flags.map(f=>`<div class="cert-flag">🔴 ${f.l}</div>`).join('')}
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Verified Documents Audited</div>
+          <div class="cert-docs">${kycData.docs.slice(0,5).map(d=>`<span class="cert-doc">✓ ${d.split('(')[0].trim()}</span>`).join('')}${kycData.docs.length>5?`<span class="cert-doc">+${kycData.docs.length-5} more</span>`:''}</div>
+        </div>
+      </div>
+    </div>`;
+  kycGo(5);
+}
+
+function resetKYC() {
+  kycData={};
+  document.querySelectorAll('#page-kyc input, #page-kyc select, #page-kyc textarea').forEach(el=>{if(el.type==='date')el.value='1990-01-01';else if(el.tagName==='SELECT')el.selectedIndex=0;else el.value='';});
+  document.getElementById('risk-output').innerHTML='';
+  document.getElementById('doc-output').innerHTML='';
+  document.getElementById('cert-output').innerHTML='';
+  kycGo(1);
+}
+
+// ============================================================
+// PEP SCREENING
+// ============================================================
+function runPEP() {
+  const q=document.getElementById('pep-search').value.trim().toLowerCase();
+  const jur=document.getElementById('pep-jur').value;
+  const st=document.getElementById('pep-status').value;
+  if(!q){alert('Please enter a name to search');return;}
+  const res=PEPS.filter(p=>{
+    const nm=p.name.toLowerCase().includes(q)||q.split(' ').some(w=>w.length>2&&p.name.toLowerCase().includes(w))||p.ref.toLowerCase()===q;
+    const jm=!jur||p.country===jur;
+    const sm=!st||p.status===st;
+    return nm&&jm&&sm;
+  });
+  const el=document.getElementById('pep-results');
+  if(res.length===0){
+    el.innerHTML=`<div class="alert alert-green"><span class="alert-icon">✓</span><span><strong>No PEP match found</strong> for "${document.getElementById('pep-search').value}" in the reference database. Note: Commercial database screening (Refinitiv World-Check, Dow Jones) still mandatory for live compliance.</span></div>`;
+    return;
+  }
+  stats.pep+=res.length;
+  document.getElementById('d-pep').textContent=stats.pep;
+  addActivity(`PEP Match: ${res.length} result(s) for "${document.getElementById('pep-search').value}"`,` · EDD mandatory · FATF R.12`,'danger');
+  el.innerHTML=`
+    <div class="alert alert-red" style="margin-bottom:10px;"><span class="alert-icon">⚠</span><span><strong>${res.length} PEP match(es) identified.</strong> EDD mandatory per FATF R.12 / PMLA Rule 9(1A). Do not proceed without senior management approval.</span></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Ref ID</th><th>Official Name / Country</th><th>Cabinet Position Held</th><th>PEP Class Hierarchy</th><th>Status</th><th>Audit Match</th></tr></thead>
+      <tbody>${res.map(p=>`<tr>
+        <td style="font-family:var(--mono);font-size:11px;color:var(--text3);">${p.ref}</td>
+        <td><div style="font-weight:500;">${p.name}</div><div style="font-size:11px;color:var(--text3);">${p.country}</div></td>
+        <td style="font-size:11px;">${p.position}</td>
+        <td style="font-size:11px;color:var(--text3);">${p.category}</td>
+        <td><span class="badge ${p.status==='current'?'badge-red':'badge-amber'}">${p.status.toUpperCase()}</span></td>
+        <td><button class="btn btn-ghost" style="font-size:10px;padding:3px 8px;" onclick="alert('EDD initiated for ${p.name}. Obtain: 2+ ID sources, SOW documentation, senior management approval, and activate quarterly monitoring.')">AUDIT →</button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+}
+
+// ============================================================
+// STR GENERATOR
+// ============================================================
+function genSTR() {
+  const name=document.getElementById('s-name').value.trim();
+  const type=document.getElementById('s-type').value;
+  const desc=document.getElementById('s-desc').value.trim();
+  if(!name||!type||!desc){alert('Please fill all required fields (*)');return;}
+  const flags=Array.from(document.querySelectorAll('#red-flags input:checked')).map(i=>i.value);
+  const now=new Date();
+  const ref='STR-'+now.getFullYear()+'-'+String(Math.floor(Math.random()*90000)+10000);
+  const susDate=document.getElementById('s-date').value;
+  let deadline='';
+  if(susDate){const d=new Date(susDate);d.setDate(d.getDate()+10);deadline=d.toDateString()+'(approx. 7 working days)';}
+  addActivity(`STR Drafted: ${name}`,` · ${type} · ${ref}`,'warn');
+  document.getElementById('str-output').innerHTML=`
+    <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:10px;padding:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text);">SUSPICIOUS TRANSACTION REPORT</div>
+        <span class="badge badge-red">CONFIDENTIAL</span>
+      </div>
+      <div class="divider" style="margin:10px 0;"></div>
+      <table style="width:100%;font-size:11px;"><tbody>
+        <tr><td style="color:var(--text3);padding:3px 0;width:45%;">Reference No.</td><td style="font-family:var(--mono);font-weight:600;color:var(--blue);">${ref}</td></tr>
+        <tr><td style="color:var(--text3);padding:3px 0;">Subject</td><td>${name}</td></tr>
+        <tr><td style="color:var(--text3);padding:3px 0;">Account / KYC Ref</td><td>${document.getElementById('s-ref').value||'N/A'}</td></tr>
+        <tr><td style="color:var(--text3);padding:3px 0;">Date Suspicion Arose</td><td>${susDate||'Not specified'}</td></tr>
+        <tr><td style="color:var(--text3);padding:3px 0;">FIU-IND Filing Deadline</td><td style="color:var(--red);font-weight:600;">${deadline||'Calculate from suspicion date'}</td></tr>
+        <tr><td style="color:var(--text3);padding:3px 0;">Suspicion Type</td><td>${type}</td></tr>
+        <tr><td style="color:var(--text3);padding:3px 0;">Amount (INR)</td><td>${document.getElementById('s-amount').value?'₹'+Number(document.getElementById('s-amount').value).toLocaleString('en-IN'):'Not specified'}</td></tr>
+        <tr><td style="color:var(--text3);padding:3px 0;">Prepared By</td><td>${document.getElementById('s-by').value||'N/A'}</td></tr>
+      </tbody></table>
+      ${flags.length>0?`<div style="margin-top:10px;"><div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:5px;">RED FLAGS:</div><div style="display:flex;flex-wrap:wrap;gap:4px;">${flags.map(f=>`<span class="badge badge-red">${f}</span>`).join('')}</div></div>`:''}
+      <div class="alert alert-amber" style="margin-top:10px;font-size:11px;"><span class="alert-icon">⚠</span><span><strong>TIPPING OFF PROHIBITION (PMLA S.14A):</strong> Do NOT inform the subject. Retain for 5 years minimum (PMLA S.12). Submit via FIU-IND FINnet Portal only.</span></div>
+    </div>`;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('s-date').value=new Date().toISOString().split('T')[0];
+});
+</script>
+</body>
+</html>
